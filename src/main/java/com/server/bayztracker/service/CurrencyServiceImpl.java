@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class CurrencyServiceImpl implements CurrencyService{
+public class CurrencyServiceImpl implements CurrencyService {
 
     @Autowired
     private CurrencyRepository currencyRepository;
@@ -15,5 +15,10 @@ public class CurrencyServiceImpl implements CurrencyService{
     public Currency addNewCurrency(Currency currency) {
         currency.validate();
         return currencyRepository.save(currency);
+    }
+
+    @Override
+    public Iterable<Currency> fetchAllCurrencyDetail() {
+        return currencyRepository.findAll();
     }
 }

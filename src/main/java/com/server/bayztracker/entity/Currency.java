@@ -1,6 +1,6 @@
 package com.server.bayztracker.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.server.bayztracker.exception.UnsupportedCurrencyCreationException;
 import lombok.Data;
 
@@ -9,6 +9,7 @@ import java.util.*;
 
 @Data
 @Entity
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Currency {
 
     @Id
@@ -18,12 +19,10 @@ public class Currency {
 
     private float currentPrice;
 
-    @JsonIgnore
     private String createdTime = new Date().toString();
 
     private Boolean enabled;
 
-    @JsonIgnore
     private Boolean triggered = false;
 
     public void validate() {
