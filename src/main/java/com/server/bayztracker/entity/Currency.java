@@ -1,8 +1,11 @@
 package com.server.bayztracker.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.server.bayztracker.exception.UnsupportedCurrencyCreationException;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.*;
 
 @Data
 @Entity
@@ -13,11 +16,21 @@ public class Currency {
 
     private String  symbol;
 
-    private String currentPrice;
+    private float currentPrice;
 
-    private String createdTime;
+    @JsonIgnore
+    private String createdTime = new Date().toString();
 
     private Boolean enabled;
 
-    private Boolean triggered;
+    @JsonIgnore
+    private Boolean triggered = false;
+
+    public void validate() {
+        List<String> forbiddenCurrency = Arrays.asList("ETH", "LTC", "ZKN", "MRD", "LPR", "GBZ");
+
+        if (forbiddenCurrency.stream().anyMatch(symbol::equalsIgnoreCase)) {
+            throw new UnsupportedCurrencyCreationException(symbol + " Currency isn't Supported");
+        }
+    }
 }

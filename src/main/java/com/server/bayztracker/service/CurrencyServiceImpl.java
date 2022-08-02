@@ -13,6 +13,7 @@ public class CurrencyServiceImpl implements CurrencyService{
 
     @Override
     public Currency addNewCurrency(Currency currency) {
+        currency.validate();
         return currencyRepository.save(currency);
     }
 }
