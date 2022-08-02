@@ -15,6 +15,7 @@ public class Currency {
     @Id
     private String name;
 
+    @Column(unique = true)
     private String  symbol;
 
     private float currentPrice;
@@ -24,6 +25,9 @@ public class Currency {
     private Boolean enabled;
 
     private Boolean triggered = false;
+
+    //To Check Whether Coin is Active or Not
+    private Boolean active = true;
 
     public void validate() {
         List<String> forbiddenCurrency = Arrays.asList("ETH", "LTC", "ZKN", "MRD", "LPR", "GBZ");

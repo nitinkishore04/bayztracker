@@ -7,4 +7,8 @@ public interface CurrencyService {
     Currency addNewCurrency(Currency currency);
 
     Iterable<Currency> fetchAllCurrencyDetail();
+
+    Currency getByName(String name);
+
+    Currency deleteCurrencyBySymbol(String symbolName);
 }

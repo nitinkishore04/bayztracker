@@ -21,8 +21,20 @@ public class CurrencyController {
 
     @GetMapping("/get")
     @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
-    public Iterable<Currency> addNewCurrency() {
+    public Iterable<Currency> getListOfAllCurrency() {
         return currencyService.fetchAllCurrencyDetail();
+    }
+
+    @GetMapping("/get/name")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    public Currency getCurrencyBySymbol(@RequestParam String symbolName) {
+        return currencyService.getByName(symbolName);
+    }
+
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    public Currency deleteCurrencyBySymbol(@RequestParam String symbolName) {
+        return currencyService.deleteCurrencyBySymbol(symbolName);
     }
 
 }
