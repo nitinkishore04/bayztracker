@@ -1,0 +1,103 @@
+package com.server.bayztracker.service;
+
+import com.server.bayztracker.dao.AlertRepository;
+import com.server.bayztracker.dao.CurrencyRepository;
+import com.server.bayztracker.entity.Alert;
+import com.server.bayztracker.entity.Currency;
+import com.server.bayztracker.util.Util;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+
+@ExtendWith(MockitoExtension.class)
+class AlertServiceImplTest {
+
+    @Mock
+    private AlertRepository alertRepository;
+
+    @Mock
+    private CurrencyRepository currencyRepository;
+
+    @InjectMocks
+    private AlertServiceImpl target;
+
+    @Test
+    void whenAlertForCoinIsCreated_ItShouldHappenSuccessfully() {
+        Mockito.when(currencyRepository.findBySymbolAndActive(anyString(), anyBoolean())).thenReturn(Optional.of(getCurrency()));
+
+        try (MockedStatic<Util> utilities = Mockito.mockStatic(Util.class)) {
+            utilities.when(Util::getUserName).thenReturn("user");
+            target.createAlert(getAlert());
+            Mockito.verify(alertRepository, Mockito.times(1)).save(any(Alert.class));
+        }
+    }
+
+    @Test
+    void whenAlertForUnknownCoinIsCreated_ItShouldThrowException() {
+        Mockito.when(currencyRepository.findBySymbolAndActive(anyString(), anyBoolean())).thenReturn(Optional.empty());
+
+        try (MockedStatic<Util> utilities = Mockito.mockStatic(Util.class)) {
+            utilities.when(Util::getUserName).thenReturn("user");
+            assertThatThrownBy(() -> target.createAlert(getAlert()))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("Invalid Coin Symbol");
+            Mockito.verify(alertRepository, Mockito.times(0)).save(any(Alert.class));
+            Mockito.verify(currencyRepository, Mockito.times(1)).findBySymbolAndActive(anyString(), anyBoolean());
+        }
+    }
+
+    @Test
+    void whenWeRetrieveListOfAllAlert_ThenItShouldHappenSuccessfully() {
+        try (MockedStatic<Util> utilities = Mockito.mockStatic(Util.class)) {
+            utilities.when(Util::getUserName).thenReturn("user");
+            target.getAllAlertSetByUser();
+            Mockito.verify(alertRepository, Mockito.times(1)).findAllByCreatedBy(anyString());
+        }
+    }
+
+    @Test
+    void whenWeRetrieveListOfAllAlertForACoin_ThenItShouldHappenSuccessfully() {
+        try (MockedStatic<Util> utilities = Mockito.mockStatic(Util.class)) {
+            utilities.when(Util::getUserName).thenReturn("user");
+            target.getAllAlertForACoin("TEST");
+            Mockito.verify(alertRepository, Mockito.times(1)).findAllByCurrencyAndCreatedBy(anyString(), anyString());
+        }
+    }
+
+    @Test
+    void whenSpecificCoinAlertIsRetrieved_ThenItShouldHappenSuccessfully() {
+        Mockito.when(alertRepository.findById(anyInt())).thenReturn(Optional.of(getAlert()));
+        target.getAlertById(1);
+        Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+    }
+
+    @Test
+    void whenCoinAlertIsRetrievedWithWrongId_ThenItShouldThrowException() {
+        Mockito.when(alertRepository.findById(anyInt())).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> target.getAlertById(1))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Id = 1 is invalid");
+        Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+    }
+
+    private static Currency getCurrency() {
+        Currency req = new Currency();
+        req.setSymbol("ABC");
+        return req;
+    }
+
+    private static Alert getAlert() {
+        Alert req = new Alert();
+        req.setCurrency("ABC");
+        return req;
+    }
+}
