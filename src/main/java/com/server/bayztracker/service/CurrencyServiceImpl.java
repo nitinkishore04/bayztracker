@@ -5,7 +5,6 @@ import com.server.bayztracker.entity.Currency;
 import com.server.bayztracker.exception.InvalidCoinException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
