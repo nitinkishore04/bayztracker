@@ -11,4 +11,6 @@ public interface CurrencyService {
     Currency getByName(String name);
 
     Currency deleteCurrencyBySymbol(String symbolName);
+
+    Iterable<Currency> getArchivedCoin();
 }

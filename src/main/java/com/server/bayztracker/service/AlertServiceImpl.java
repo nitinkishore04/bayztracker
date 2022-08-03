@@ -28,7 +28,7 @@ public class AlertServiceImpl implements AlertService {
     }
 
     private void validateCoin(Alert alert) {
-        Optional<Currency> coin = currencyRepository.findBySymbol(alert.getCurrency());
+        Optional<Currency> coin = currencyRepository.findBySymbolAndActive(alert.getCurrency(), Boolean.TRUE);
         if(!coin.isPresent()) {
             //TODO: create not valid coin exception
             throw new RuntimeException("Invalid Coin Symbol");

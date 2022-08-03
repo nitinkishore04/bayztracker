@@ -37,15 +37,19 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Currency deleteCurrencyBySymbol(String symbolName) {
-        Optional<Currency> result = currencyRepository.findBySymbol(symbolName);
+        Optional<Currency> result = currencyRepository.findBySymbolAndActive(symbolName, Boolean.TRUE);
         if (result.isPresent()) {
             Currency response = result.get();
             response.setActive(Boolean.FALSE);
-            currencyRepository.save(response);
+            return currencyRepository.save(response);
         } else {
             //TODO: Create NoCoinFoundException
             throw new RuntimeException("There is no coin with symbol = " + symbolName);
         }
-        return null;
+    }
+
+    @Override
+    public Iterable<Currency> getArchivedCoin() {
+        return currencyRepository.findAllByActive(Boolean.FALSE);
     }
 }

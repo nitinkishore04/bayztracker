@@ -37,4 +37,11 @@ public class CurrencyController {
         return currencyService.deleteCurrencyBySymbol(symbolName);
     }
 
+    @GetMapping("/archived")
+    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    public Iterable<Currency> getArchivedCoin() {
+        return currencyService.getArchivedCoin();
+    }
+
+
 }
