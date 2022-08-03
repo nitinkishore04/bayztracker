@@ -7,4 +7,6 @@ import java.util.Collection;
 
 public interface AlertRepository  extends CrudRepository<Alert, Integer> {
     Collection<Alert> findAllByCreatedBy(String createdBy);
+
+    Collection<Alert> findAllByCurrencyAndCreatedBy(String currency, String createdBy);
 }
