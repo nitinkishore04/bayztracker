@@ -5,6 +5,8 @@ import com.server.bayztracker.dao.CurrencyRepository;
 import com.server.bayztracker.entity.Alert;
 import com.server.bayztracker.entity.Currency;
 import com.server.bayztracker.entity.Status;
+import com.server.bayztracker.exception.InvalidActionException;
+import com.server.bayztracker.exception.InvalidCoinException;
 import com.server.bayztracker.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,8 +32,7 @@ public class AlertServiceImpl implements AlertService {
     private void validateCoin(Alert alert) {
         Optional<Currency> coin = currencyRepository.findBySymbolAndActive(alert.getCurrency(), Boolean.TRUE);
         if(!coin.isPresent()) {
-            //TODO: create not valid coin exception
-            throw new RuntimeException("Invalid Coin Symbol");
+            throw new InvalidCoinException("Invalid Coin Symbol");
         }
     }
 
@@ -51,7 +52,7 @@ public class AlertServiceImpl implements AlertService {
         if (res.isPresent()) {
             return res.get();
         } else {
-            throw new RuntimeException("Id = " + id + " is invalid");
+            throw new InvalidActionException("Id = " + id + " is invalid");
         }
     }
 
@@ -61,7 +62,7 @@ public class AlertServiceImpl implements AlertService {
         if(alert.getStatus() == Status.NEW) {
             alert.setStatus(Status.CANCELLED);
         } else {
-            throw new RuntimeException("Alert cannot be changed from alert = " + alert.getStatus() + " state.");
+            throw new InvalidActionException("Alert cannot be changed from alert = " + alert.getStatus() + " state.");
         }
         return alertRepository.save(alert);
     }
@@ -72,7 +73,7 @@ public class AlertServiceImpl implements AlertService {
         if(alert.getStatus() == Status.NEW) {
             alert.setStatus(Status.ACKED);
         } else {
-            throw new RuntimeException("Alert cannot be changed from alert = " + alert.getStatus() + " state.");
+            throw new InvalidActionException("Alert cannot be changed from alert = " + alert.getStatus() + " state.");
         }
         return alertRepository.save(alert);
     }

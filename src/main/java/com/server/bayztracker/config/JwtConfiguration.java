@@ -13,16 +13,18 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
-@Slf4j
 @Configuration
 public class JwtConfiguration {
+
+    Logger logger = LoggerFactory.getLogger(JwtConfiguration.class);
 
     @Value("${app.security.jwt.keystore-location}")
     private String keyStorePath;
@@ -44,7 +46,7 @@ public class JwtConfiguration {
             keyStore.load(resourceAsStream, keyStorePassword.toCharArray());
             return keyStore;
         } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException e) {
-            log.error("Unable to load keystore: {}", keyStorePath, e);
+            logger.error("Unable to load keystore: {}", keyStorePath, e);
         }
 
         throw new IllegalArgumentException("Unable to load keystore");
@@ -58,7 +60,7 @@ public class JwtConfiguration {
                 return (RSAPrivateKey) key;
             }
         } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
-            log.error("Unable to load private key from keystore: {}", keyStorePath, e);
+            logger.error("Unable to load private key from keystore: {}", keyStorePath, e);
         }
 
         throw new IllegalArgumentException("Unable to load private key");
@@ -74,7 +76,7 @@ public class JwtConfiguration {
                 return (RSAPublicKey) publicKey;
             }
         } catch (KeyStoreException e) {
-            log.error("Unable to load private key from keystore: {}", keyStorePath, e);
+            logger.error("Unable to load private key from keystore: {}", keyStorePath, e);
         }
 
         throw new IllegalArgumentException("Unable to load RSA public key");

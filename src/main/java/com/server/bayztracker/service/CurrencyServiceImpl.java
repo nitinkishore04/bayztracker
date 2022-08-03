@@ -2,6 +2,7 @@ package com.server.bayztracker.service;
 
 import com.server.bayztracker.dao.CurrencyRepository;
 import com.server.bayztracker.entity.Currency;
+import com.server.bayztracker.exception.InvalidCoinException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,8 +31,7 @@ public class CurrencyServiceImpl implements CurrencyService {
         if (result.isPresent()) {
             return result.get();
         } else {
-            //TODO: Create NoCoinFoundException
-            throw new RuntimeException("There is no coin with symbol = " + name);
+            throw new InvalidCoinException("There is no coin with symbol = " + name);
         }
     }
 
@@ -43,8 +43,7 @@ public class CurrencyServiceImpl implements CurrencyService {
             response.setActive(Boolean.FALSE);
             return currencyRepository.save(response);
         } else {
-            //TODO: Create NoCoinFoundException
-            throw new RuntimeException("There is no coin with symbol = " + symbolName);
+            throw new InvalidCoinException("There is no coin with symbol = " + symbolName);
         }
     }
 

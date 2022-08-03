@@ -35,7 +35,6 @@ public class LoginController {
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginRequest request) {
 
-        System.out.println("request = " + request);
         UserDetails userDetails;
         try {
             userDetails = userDetailsService.loadUserByUsername(request.getUsername());
