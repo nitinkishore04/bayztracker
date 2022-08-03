@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Data
 @Entity
@@ -20,7 +21,10 @@ public class Alert {
 
     private float targetPrice;
 
-    private String createdAt;
+    private String createdAt = new Date().toString();
 
-    private Status status;
+    private Status status = Status.NEW;
+
+    private String createdBy;
+
 }

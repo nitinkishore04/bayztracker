@@ -32,7 +32,7 @@ public class CurrencyController {
     }
 
     @DeleteMapping("/delete")
-    @PreAuthorize("hasAnyAuthority('ADMIN', 'USER')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public Currency deleteCurrencyBySymbol(@RequestParam String symbolName) {
         return currencyService.deleteCurrencyBySymbol(symbolName);
     }

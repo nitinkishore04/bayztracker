@@ -24,8 +24,6 @@ public class Currency {
 
     private Boolean enabled;
 
-    private Boolean triggered = false;
-
     //To Check Whether Coin is Active or Not
     private Boolean active = true;
 
