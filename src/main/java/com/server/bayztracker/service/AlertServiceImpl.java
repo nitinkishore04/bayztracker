@@ -10,7 +10,6 @@ import com.server.bayztracker.exception.InvalidCoinException;
 import com.server.bayztracker.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
 
 @Service
@@ -24,9 +23,12 @@ public class AlertServiceImpl implements AlertService {
 
     @Override
     public Alert createAlert(Alert alert) {
-        validateCoin(alert);
-        alert.setCreatedBy(Util.getUserName());
-        return alertRepository.save(alert);
+        if(!alertRepository.existsByCurrencyAndTargetPriceAndCreatedByAndStatus(alert.getCurrency(), alert.getTargetPrice(), Util.getUserName(), alert.getStatus())) {
+            validateCoin(alert);
+            alert.setCreatedBy(Util.getUserName());
+            return alertRepository.save(alert);
+        }
+        throw new RuntimeException("Another alert for same detail already exist");
     }
 
     private void validateCoin(Alert alert) {

@@ -43,4 +43,10 @@ public class AlertController {
         return alertService.deleteAlertIfNotTriggered(id);
     }
 
+    @GetMapping("/acknowledge")
+    @PreAuthorize("hasAuthority('USER')")
+    public Alert acknowledgeTrigger(@RequestParam Integer id) {
+        return alertService.acknowledgeAlert(id);
+    }
+
 }
