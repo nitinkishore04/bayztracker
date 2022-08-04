@@ -31,7 +31,7 @@ public class Currency {
         List<String> forbiddenCurrency = Arrays.asList("ETH", "LTC", "ZKN", "MRD", "LPR", "GBZ");
 
         if (forbiddenCurrency.stream().anyMatch(symbol::equalsIgnoreCase)) {
-            throw new UnsupportedCurrencyCreationException(symbol + " Currency isn't Supported");
+            throw new UnsupportedCurrencyCreationException("Currency with symbol = " + symbol + " isn't Supported");
         }
     }
 }

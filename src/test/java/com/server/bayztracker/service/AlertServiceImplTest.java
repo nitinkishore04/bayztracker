@@ -14,6 +14,7 @@ import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Date;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -39,6 +40,17 @@ class AlertServiceImplTest {
             utilities.when(Util::getUserName).thenReturn("user");
             target.createAlert(getAlert());
             Mockito.verify(alertRepository, Mockito.times(1)).save(any(Alert.class));
+        }
+    }
+
+    @Test
+    void whenAlertWithSameDetailIsCreatedTwice_ItShouldThrowException() {
+        Mockito.when(alertRepository.existsByCurrencyAndTargetPriceAndCreatedByAndStatus(anyString(), anyFloat(), anyString(), any(Status.class))).thenReturn(Boolean.TRUE);
+        try (MockedStatic<Util> utilities = Mockito.mockStatic(Util.class)) {
+            utilities.when(Util::getUserName).thenReturn("user");
+            assertThatThrownBy(() -> target.createAlert(getAlert()))
+                    .isInstanceOf(RuntimeException.class)
+                    .hasMessage("Another alert for same detail already exist");
         }
     }
 
@@ -111,15 +123,43 @@ class AlertServiceImplTest {
         Mockito.verify(alertRepository, Mockito.times(0)).save(any(Alert.class));
     }
 
+    @Test
+    void whenUserAcknowledgeAlert_ThenItShouldHappenSuccessfully() {
+        Mockito.when(alertRepository.findById(anyInt())).thenReturn(Optional.of(getAlert()));
+        target.acknowledgeAlert(1);
+        Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+        Mockito.verify(alertRepository, Mockito.times(1)).save(any(Alert.class));
+
+    }
+
+    @Test
+    void whenUserTryToAcknowledgeTriggeredAlert_ThenItShouldThrowException() {
+        Alert req = getAlert();
+        req.setStatus(Status.ACKED);
+        Mockito.when(alertRepository.findById(anyInt())).thenReturn(Optional.of(req));
+        assertThatThrownBy(() -> target.acknowledgeAlert(1))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Alert cannot be changed from alert = ACKED state.");
+        Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+        Mockito.verify(alertRepository, Mockito.times(0)).save(any(Alert.class));
+    }
+
     private static Currency getCurrency() {
         Currency req = new Currency();
         req.setSymbol("ABC");
+        req.setActive(true);
+        req.setName("TEST");
+        req.setEnabled(true);
+        req.setCreatedTime(new Date().toString());
         return req;
     }
 
     private static Alert getAlert() {
         Alert req = new Alert();
         req.setCurrency("ABC");
+        req.setTargetPrice(12.0F);
+        req.setStatus(Status.NEW);
+        req.setCreatedBy("user");
         return req;
     }
 }

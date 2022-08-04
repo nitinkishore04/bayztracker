@@ -8,6 +8,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Date;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
@@ -25,6 +27,16 @@ class CurrencyServiceImplTest {
     void whenNewCoinIsAdded_ThenItShouldBeAddedSuccessFully() {
         target.addNewCurrency(getCurrency());
         Mockito.verify(currencyRepository, Mockito.times(1)).save(any(Currency.class));
+    }
+
+    @Test
+    void whenNewCoinIsAddedWithForbiddenName_ThenItShouldThrowException() {
+        Currency req = getCurrency();
+        req.setSymbol("ETH");
+        assertThatThrownBy(() -> target.addNewCurrency(req))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Currency with symbol = ETH isn't Supported");
+        Mockito.verify(currencyRepository, Mockito.times(0)).save(any(Currency.class));
     }
 
     @Test
@@ -76,6 +88,10 @@ class CurrencyServiceImplTest {
     private static Currency getCurrency() {
         Currency req = new Currency();
         req.setSymbol("ABC");
+        req.setActive(true);
+        req.setName("TEST");
+        req.setEnabled(true);
+        req.setCreatedTime(new Date().toString());
         return req;
     }
 
