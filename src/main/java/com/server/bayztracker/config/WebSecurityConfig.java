@@ -1,6 +1,8 @@
 package com.server.bayztracker.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -14,7 +16,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Component;
 
-@Component
+@Configuration
 @EnableGlobalMethodSecurity(
         prePostEnabled = true
 )
@@ -22,11 +24,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final String AUTHORITIES_CLAIM_NAME = "roles";
 
-    private final PasswordEncoder passwordEncoder;
-
-    public WebSecurityConfig(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -39,7 +38,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests(configurer ->
                         configurer
                                 .antMatchers(
-                                        "/error",
                                         "/auth/*"
                                 )
                                 .permitAll()

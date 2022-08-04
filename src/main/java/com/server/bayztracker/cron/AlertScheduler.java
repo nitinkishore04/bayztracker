@@ -24,7 +24,7 @@ public class AlertScheduler {
     @Autowired
     private CurrencyRepository currencyRepository;
 
-    @Scheduled(cron = "0 0/30 * 1/1 * ?")
+    @Scheduled(cron = "0/30 0/1 * 1/1 * ?")
     public void sendAlert() {
 
         Collection<Alert> alerts = alertRepository.findAllByStatus(Status.NEW);

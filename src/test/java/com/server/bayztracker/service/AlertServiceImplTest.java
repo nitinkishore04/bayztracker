@@ -4,6 +4,7 @@ import com.server.bayztracker.dao.AlertRepository;
 import com.server.bayztracker.dao.CurrencyRepository;
 import com.server.bayztracker.entity.Alert;
 import com.server.bayztracker.entity.Currency;
+import com.server.bayztracker.entity.Status;
 import com.server.bayztracker.util.Util;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -87,6 +88,27 @@ class AlertServiceImplTest {
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Id = 1 is invalid");
         Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+    }
+
+    @Test
+    void whenUserDeleteUnTriggeredAlert_ThenItShouldHappenSuccessfully() {
+        Mockito.when(alertRepository.findById(anyInt())).thenReturn(Optional.of(getAlert()));
+        target.deleteAlertIfNotTriggered(1);
+        Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+        Mockito.verify(alertRepository, Mockito.times(1)).save(any(Alert.class));
+
+    }
+
+    @Test
+    void whenUserDeleteTriggeredAlert_ThenItShouldThrowException() {
+        Alert req = getAlert();
+        req.setStatus(Status.TRIGGERRED);
+        Mockito.when(alertRepository.findById(anyInt())).thenReturn(Optional.of(req));
+        assertThatThrownBy(() -> target.deleteAlertIfNotTriggered(1))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Alert cannot be changed from alert = TRIGGERRED state.");
+        Mockito.verify(alertRepository, Mockito.times(1)).findById(anyInt());
+        Mockito.verify(alertRepository, Mockito.times(0)).save(any(Alert.class));
     }
 
     private static Currency getCurrency() {

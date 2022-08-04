@@ -11,17 +11,16 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.stereotype.Component;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Component
 public class JwtHelper {
 
-    private final RSAPrivateKey privateKey;
-    private final RSAPublicKey publicKey;
+    @Autowired
+    private RSAPrivateKey privateKey;
 
-    public JwtHelper(RSAPrivateKey privateKey, RSAPublicKey publicKey) {
-        this.privateKey = privateKey;
-        this.publicKey = publicKey;
-    }
+    @Autowired
+    private RSAPublicKey publicKey;
 
     public String createJwtForClaims(String subject, Map<String, String> claims) {
         Calendar calendar = Calendar.getInstance();

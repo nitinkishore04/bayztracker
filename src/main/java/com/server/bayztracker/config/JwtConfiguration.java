@@ -26,27 +26,27 @@ public class JwtConfiguration {
 
     Logger logger = LoggerFactory.getLogger(JwtConfiguration.class);
 
-    @Value("${app.security.jwt.keystore-location}")
-    private String keyStorePath;
+    @Value("${keystore.location}")
+    private String keyStoreFilePath;
 
-    @Value("${app.security.jwt.keystore-password}")
+    @Value("${keystore.password}")
     private String keyStorePassword;
 
-    @Value("${app.security.jwt.key-alias}")
-    private String keyAlias;
+    @Value("${keystore.alias}")
+    private String keyStoreAlias;
 
-    @Value("${app.security.jwt.private-key-passphrase}")
-    private String privateKeyPassphrase;
+    @Value("${keystore.passphrase}")
+    private String keyStorePassPhrase;
 
     @Bean
     public KeyStore keyStore() {
         try {
             KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
-            InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(keyStorePath);
+            InputStream resourceAsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(keyStoreFilePath);
             keyStore.load(resourceAsStream, keyStorePassword.toCharArray());
             return keyStore;
         } catch (IOException | CertificateException | NoSuchAlgorithmException | KeyStoreException e) {
-            logger.error("Unable to load keystore: {}", keyStorePath, e);
+            logger.error("Unable to load keystore: {}", keyStoreFilePath, e);
         }
 
         throw new IllegalArgumentException("Unable to load keystore");
@@ -55,12 +55,12 @@ public class JwtConfiguration {
     @Bean
     public RSAPrivateKey jwtSigningKey(KeyStore keyStore) {
         try {
-            Key key = keyStore.getKey(keyAlias, privateKeyPassphrase.toCharArray());
+            Key key = keyStore.getKey(keyStoreAlias, keyStorePassPhrase.toCharArray());
             if (key instanceof RSAPrivateKey) {
                 return (RSAPrivateKey) key;
             }
         } catch (UnrecoverableKeyException | NoSuchAlgorithmException | KeyStoreException e) {
-            logger.error("Unable to load private key from keystore: {}", keyStorePath, e);
+            logger.error("Unable to load private key from keystore: {}", keyStoreFilePath, e);
         }
 
         throw new IllegalArgumentException("Unable to load private key");
@@ -69,14 +69,14 @@ public class JwtConfiguration {
     @Bean
     public RSAPublicKey jwtValidationKey(KeyStore keyStore) {
         try {
-            Certificate certificate = keyStore.getCertificate(keyAlias);
+            Certificate certificate = keyStore.getCertificate(keyStoreAlias);
             PublicKey publicKey = certificate.getPublicKey();
 
             if (publicKey instanceof RSAPublicKey) {
                 return (RSAPublicKey) publicKey;
             }
         } catch (KeyStoreException e) {
-            logger.error("Unable to load private key from keystore: {}", keyStorePath, e);
+            logger.error("Unable to load private key from keystore: {}", keyStoreFilePath, e);
         }
 
         throw new IllegalArgumentException("Unable to load RSA public key");

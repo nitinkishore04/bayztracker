@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = {"${app.security.cors.origin}"})
 public class LoginController {
 
     @Autowired
