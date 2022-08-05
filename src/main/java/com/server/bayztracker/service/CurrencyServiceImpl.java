@@ -2,6 +2,7 @@ package com.server.bayztracker.service;
 
 import com.server.bayztracker.dao.CurrencyRepository;
 import com.server.bayztracker.entity.Currency;
+import com.server.bayztracker.exception.InvalidActionException;
 import com.server.bayztracker.exception.InvalidCoinException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -50,4 +51,17 @@ public class CurrencyServiceImpl implements CurrencyService {
     public Iterable<Currency> getArchivedCoin() {
         return currencyRepository.findAllByActive(Boolean.FALSE);
     }
+
+    @Override
+    public Currency updateExistingCoin(String name, Currency currency) {
+        Optional<Currency> res = currencyRepository.findById(name);
+        if (res.isPresent()) {
+            Currency queryResult = res.get();
+            queryResult.setSymbol(currency.getSymbol());
+            queryResult.setCurrentPrice(currency.getCurrentPrice());
+            return currencyRepository.save(queryResult);
+        }
+        throw new InvalidActionException("Please pass valid Currency name.");
+    }
+
 }

@@ -43,5 +43,9 @@ public class CurrencyController {
         return currencyService.getArchivedCoin();
     }
 
-
+    @PostMapping("/update")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public Currency updateCurrency(@RequestParam String name, @RequestBody Currency currency) {
+        return currencyService.updateExistingCoin(name, currency);
+    }
 }

@@ -13,4 +13,6 @@ public interface CurrencyService {
     Currency deleteCurrencyBySymbol(String symbolName);
 
     Iterable<Currency> getArchivedCoin();
+
+    Currency updateExistingCoin(String name, Currency currency);
 }

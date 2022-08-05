@@ -85,6 +85,30 @@ class CurrencyServiceImplTest {
         Mockito.verify(currencyRepository, Mockito.times(1)).findAllByActive(anyBoolean());
     }
 
+    @Test
+    void whenCoinIsUpdatedWithValidName_ThenItShouldBeAddedSuccessFully() {
+        Currency req = new Currency();
+        req.setSymbol("NEW");
+        req.setCurrentPrice(190F);
+
+        Mockito.when(currencyRepository.findById(anyString())).thenReturn(Optional.of(getCurrency()));
+        target.updateExistingCoin("Test", req);
+        Mockito.verify(currencyRepository, Mockito.times(1)).save(any(Currency.class));
+    }
+
+    @Test
+    void whenCoinIsUpdatedWithInvalidName_ThenItShouldThrowException() {
+        Currency req = new Currency();
+        req.setSymbol("NEW");
+        req.setCurrentPrice(190F);
+
+        Mockito.when(currencyRepository.findById(anyString())).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> target.updateExistingCoin("Test", req))
+                .isInstanceOf(RuntimeException.class)
+                .hasMessage("Please pass valid Currency name.");
+        Mockito.verify(currencyRepository, Mockito.times(0)).save(any(Currency.class));
+    }
+
     private static Currency getCurrency() {
         Currency req = new Currency();
         req.setSymbol("ABC");

@@ -238,6 +238,51 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update Currency",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"symbol\": \"PQQ\",\n    \"currentPrice\": 129.25\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/currency/update?name=Coin 2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"currency",
+								"update"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Coin 2"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
