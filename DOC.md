@@ -1,4 +1,4 @@
-# BayzTracker - August 4<sup>th</sup> 2022
+# BayzTracker - August 5<sup>th</sup> 2022
 
 ## Components
  
@@ -52,3 +52,13 @@
 - Postman Collection
   - I have created Postman Collection for Bayztracker with name `Bayztracker.postman_collection.json` and added it to root of project.
   - Postman collection can also be imported using URL = ( https://www.getpostman.com/collections/f4e833683043757870eb ).
+</br></br>
+  
+- Dockerfile
+  - Please run below commands to run to create Docker image and test it using Docker
+  - docker network create <network-name> [ ex: bayzat-assignment ]
+  - docker run --name mysqldb --network bayzat-assignment -e MYSQL_ROOT_PASSWORD=password -e MYSQL_DATABASE=bayzat -d mysql:8
+  - mvn install
+  - docker image build -t <image-name> [ex: bayzat] .
+  - docker run --network bayzat-assignment --name bayztracker-assignment -p 8080:8080 -d bayzat
+  - Note: Update application.properties according as per comment in that file.
